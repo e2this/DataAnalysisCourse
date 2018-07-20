@@ -1,0 +1,508 @@
+---
+title: "First week: Introduction to R and Rstudio"
+author: "Mobin Asri - 93101938"
+date: "`r Sys.time()`"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+<div align="center">
+<img  src="images/Rman.jpeg"  align = 'center'>
+</div>
+
+<h1 dir="RTL"> 
+تمرین سری اول: چند مساله
+</h1>
+
+<p dir="RTL"> 
+به سوال های زیر را از طریق نوشتن یک کد پاسخ دهید.
+</p>
+
+<h2 dir="RTL">
+ماتریس دوستانه
+</h2>
+
+<p dir="RTL">
+یک ماتریس
+$(n,n)$
+که شامل اعداد 
+$1,2,...,n^2$
+است. دوستانه نامیده میشود اگر مجموع سطرها با مجموع ستون های آن برابر شوند. مثال هایی از ماتریس های دوستانه از بعد ۴و۵و۶ ارایه دهید. 
+</p>
+
+```{r}
+magic=matrix(data = 1:16 ,nrow = 4,byrow = T)
+magic
+rowSums(magic)
+colSums(magic)
+```
+
+<p dir="RTL"> 
+ابتدا جمع ستون ها را با برعکس کردن اعداد سطر های ۲ و ۴ یکسان می کنیم.
+</p>
+
+```{r} 
+magic[2,]=rev(magic[2,])
+magic[4,]=rev(magic[4,])
+magic
+colSums(magic)
+rowSums(magic)
+```
+
+<p dir="RTL"> 
+با این کار هنوز جمع سطر ها یکسان نشده است. برای یکسان سازی جمع سطری ، اعداد ستون ۲ و ۳ را برعکس می کنیم.
+</p>
+
+```{r}
+
+magic[,2]=rev(magic[,2])
+magic[,3]=rev(magic[,3])
+magic
+colSums(magic)
+rowSums(magic)
+```
+<p dir="RTL">
+تابع زیر با گرفتن یک عدد ماتریسی مربعی با آن ابعاد ایجاد می کند. البته همان طور که از نام تابع مشخص است این روش فقط برای ماتریس های با ابعاد فرد جواب می دهد، بنابراین ورودی زوج منجر به اشتباه می شود.
+</p>
+```{r}
+MagicOdd<-function(N){
+  
+  magic=matrix(data = 0 ,nrow = N,ncol = N)
+  
+  i=1
+  j=(N+1)/2
+  number=1
+  
+  for(number in  1:(N^2-1) ){
+    magic[i,j]=number
+    if (i==1) i=N else i=i-1
+    if (j==N) j=1 else j=j+1
+    while(magic[i,j] != 0 ) {
+      if (i==N) i=1 else i=i+1
+      if (i==N) i=1 else i=i+1
+      
+      if (j==1) j=N else j=j-1
+    }
+  }
+  magic[i,j]=N^2
+
+  return(magic)
+}
+
+MagicFive=MagicOdd(5)
+
+MagicFive
+rowSums(MagicFive)
+colSums(MagicFive)
+```
+
+<p dir="RTL">
+برای تشکیل یک ماتریس دوستانه به ابعاد ۶ می توان ابتدا ۴ تا ماتریس دوستانه به ابعاد ۳ تشکیل داد. به این روش که ماتریس دوستانه برای اعداد ۱ تا ۹ را در بالا سمت چپ ، ماتریس دوستانه برای اعداد ۱۰ تا ۱۸ را در بالا سمت راست ، ماتریس دوستانه برای اعداد ۱۹ تا ۲۷ را در پایین سمت راست و ماتریس دوستانه برای اعداد ۲۸ تا ۳۶ را در پایین سمت چپ ماتریس دوستانه به بعد ۶ قرار می دهیم.
+</p>
+```{r}
+
+MagicSix=matrix(data = 0 ,nrow = 6,ncol = 6)
+
+MagicSix[1:3,1:3]=MagicOdd(3)
+MagicSix[1:3,4:6]=MagicOdd(3)+18
+MagicSix[4:6,1:3]=MagicOdd(3)+27
+MagicSix[4:6,4:6]=MagicOdd(3)+9
+
+MagicSix
+rowSums(MagicSix)
+colSums(MagicSix)
+```
+<p dir="RTL">
+جمع تمام ستون ها با هم برابر است ولی برای آنکه جمع تمام سطرها نیز با هم برابر شوند باید جایگاه سه درایه در ستون های ۱و۲ با هم جابه جا شود.
+</p>
+```{r}
+temp=MagicSix[c(1,3),1]
+MagicSix[c(1,3),1]=MagicSix[c(4,6),1]
+MagicSix[c(4,6),1]=temp
+
+temp=MagicSix[2,2]
+MagicSix[2,2]=MagicSix[5,2]
+MagicSix[5,2]=temp
+
+MagicSix
+rowSums(MagicSix)
+colSums(MagicSix)
+
+```
+
+
+<h2 dir="RTL">
+جایشگت  عجیب
+</h2>
+
+<p dir="RTL">
+جایگشت هایی از اعداد ۱ تا ۱۳ را پیدا کنید که در شرایط زیر صدق کنند:
+</p>
+
+$$ a = (a_1, a_2,..., a_{13})$$
+$$\frac{a_1}{a_2+a_3} = \frac{a_2+a_3}{a_3+a_4+a_5}<1$$
+$$\frac{a_6}{a_6+a_7}= \frac{a_6+a_7}{a_7+a_8+a_9} = \frac{a_7+a_8+a_9}{a_5+a_9+a_{10}} <1$$
+
+$$\frac{a_{11}+a_{12}}{a_{12}+a_{13}}=\frac{a_{12}+a_{13}}{a_{13}+a_{10}}<1$$
+
+<p dir="RTL">
+از آنجایی که سه نامعادله وجود دارد و این سه معادله با یک متغیر به هم مرتبط می شوند می توان برای افزایش سرعت و کاهش حجم محاسبات توالی هایی که در هر نامعادله به صورت مجزا صدق می کنند را محاسبه کرد.
+ابتدا تمام توالی های
+$(a_1 ,a_2 ,a_3 ,a_4 ,a_5 )$
+که در نامعادله اول صدق می کند به دست می آوریم و در لیست
+$List1$
+ذخیره می کنیم.
+ </p>
+```{r}
+library(numbers)
+```
+```{r}
+
+count=0
+List1=list()
+U2=seq(1,13)
+for(a2 in U2){
+  a1=a3=a4=a5=0
+  U3=seq(1,13)
+  U3=setdiff(U3,a2)
+  for(a3 in U3){
+    X=a2+a3
+    M=(X)^2
+    divisors=divisors(M)
+    U1=divisors[divisors<X]
+    U1=setdiff(U1,c(a2,a3))
+    for(a1 in U1){
+      B=M/a1 - a3 # B = a4+a5
+      
+      U4=seq(1,min(B,13))
+      U4=setdiff(U4,c(a1,a2,a3))
+      for(a4 in U4){
+        U5=setdiff(U4,a4)
+        
+        a5=B-a4
+        
+        if(a5 %in% U5){
+          count=count+1
+          List1[[count]]=c(a1,a2,a3,a4,a5)
+        }
+      }
+    }
+  }
+}
+```
+
+<p dir="RTL">
+سپس تمام توالی های
+$(a_5,a_6,a_7,a_8,a_9,a_{10})$
+که در نامعادله دوم صدق می کند به دست می آوریم و  توالی های ممکن برای دو نامعادله اول را در 
+$List2$
+ذخیره می کنیم.
+</p>
+
+```{r}
+count=0
+List2=list()
+for(Pre_U in List1){
+  a5=Pre_U[5]
+  Max3=22
+  U7=seq(1,13)
+  U7=setdiff(U7,Pre_U)
+  for(a7 in U7){
+    a6=a8=a9=a10=0
+    U6=seq(1,13)
+    U6=setdiff(U6,a7)
+    U6=setdiff(U6,Pre_U)
+    for(a6 in U6){
+      
+      X=a6+a7
+      M=(X)^2
+      B=M/a6 - a7
+      
+      U8=seq(1,min(B,13))
+      U8=setdiff(U8,c(a7,a6))
+      U8=setdiff(U8,Pre_U)
+      
+      for(a8 in U8){
+        U9=setdiff(U8,a8)
+        a9=B - a8 
+        U10=setdiff(U9,a9)
+        a10=(((a7+a8+a9)^2)/(a6+a7)) -a5 -a9
+        if((a9 %in% U9) && (a10 %in% U10)){
+          count=count+1
+          List2[[count]]=c(Pre_U,a6,a7,a8,a9,a10)
+        }
+        
+      }
+    }
+  }
+}
+```
+<p dir="RTL">
+سپس تمام توالی های
+$(a_{10} ,a_{11} ,a_{12} ,a_{13} )$
+که در نامعادله سوم صدق می کند به دست می آوریم و  توالی های ممکن برای سه نامعادله را در 
+$List3$
+ذخیره می کنیم.
+</p>
+```{r}
+count=0
+List3=list()
+for(Pre_U in List2){
+  
+  a10=Pre_U[10]
+  U12=seq(1,13)
+  U12=setdiff(U12,Pre_U)
+  for(a12 in U12){
+    
+    U13=setdiff(U12,a12)
+    for(a13 in U13){
+      
+      U11=setdiff(U13,a13)
+      for(a11 in U11){
+        
+        eq1=(a12+a13)^2
+        eq2=(a11+a12)*(a13+a10)
+        if(eq1==eq2){
+          count=count+1
+          List3[[count]]=c(Pre_U,a11,a12,a13)
+        }
+      }
+    }
+  }
+}
+
+```
+
+<p dir="RTL">
+تنهایک جایگشت ممکن داریم که تمام شرایط صدق می کند.
+</p>
+```{r}
+List3
+```
+<h2 dir="RTL">
+مچ گیری
+</h2>
+
+<p dir="RTL">
+میزگردی شامل ۱۶ فرد دروغگو و راستگو تشکیل شده است. هر کسی ادعا میکند دو فرد کنار دستی او دروغگو هستند. چند نفر دروغگو در جمع وجود دارد؟
+</p>
+
+<p dir="RTL">
+در تابع زیر یک آرایه از حالت های افراد دور میز می گیرد و بعد بررسی می کند آیا این توالی از حالت ها با ادعاهای افراد مبنی بر این که دوفرد کنار دستی آن ها دروغگو هستند مطابقت دارد یا خیر.
+</p>
+<p dir="RTL">
+عدد یک نشان دهنده ی افراد راستگو و عدد صفر نشان دهنده ی افراد دروغگو است.
+</p>
+
+```{r}
+check_a <- function(state){
+  
+  for(k in 1:16){
+    pre=k-1
+    nex=k+1
+    if (k==1){
+      pre=16
+    }
+    if (k==16){
+      nex=1
+    }
+    if(state[k]==1){
+      if((state[nex]==1) || (state[pre]==1)){
+        return(0)
+      }
+    }
+    else {
+      if((state[nex] == 0) && (state[pre] ==0)){
+        return(0)
+      }
+    }
+  }
+  return(1)
+}
+```
+<p dir="RTL">
+ تمام حالت های ممکن برای راستگو و دروغگو بودن هر فرد را در آرایه ی
+$States$
+ذخیره می کنیم.
+سپس با استفاده از تابع ساخته شده تمام حالات را بررسی می کنیم.
+</p>
+```{r,warning=FALSE,message=FALSE}
+library(combinat)
+```
+```{r,warning=FALSE}
+N=16
+States=lapply(0:(2^N-1),function(k) as.integer(intToBits(k))[1:N])
+
+FeasibleStates=list()
+count=1
+for (state in States){
+  if (check_a(state) ==1 ){
+    FeasibleStates[[count]]=state
+    count=count+1
+  }
+}
+```
+
+
+```{r}
+head(FeasibleStates)
+Numberofliers=sapply(FeasibleStates,function(k) sum(!k))
+cat("Possible number of liers = ","\n",unique(Numberofliers))
+```
+
+
+<p dir="RTL">
+میزگرد دیگری شامل ۱۲ نفر فرد راستگو و دروغگو تشکیل شده به طوری که هر فرد ادعا میکند از میان دو نفر کنار دستی یک نفر راستگو و یک نفر دروغگو هستند. چند نفر دروغگو در جمع وجود دارد؟
+</p>
+
+<p dir="RTL">
+در تابع زیر یک آرایه از حالت های افراد دور میز می گیرد و بعد بررسی می کند آیا این توالی از حالت ها با ادعاهای افراد مبنی بر این که از میان دو نفر کنار دستی آن ها یک نفر راستگو و یک نفر دروغگو هستند مطابقت دارد  یا خیر.
+</p>
+
+```{r}
+check_b <- function(state){
+  
+  for(k in 1:12){
+    pre=k-1
+    nex=k+1
+    if (k==1){
+      pre=12
+    }
+    if (k==12){
+      nex=1
+    }
+    if(state[k]==1){
+      if( (state[nex]+state[pre]) %% 2 == 0){
+        return(0)
+      }
+    }
+    else{
+      if((state[nex]+state[pre]) %% 2 == 1){
+        return(0)
+      }
+    }
+  }
+  return(1)
+}
+```
+
+<p dir="RTL">
+ تمام حالت های ممکن برای راستگو و دروغگو بودن هر فرد را در آرایه ی
+$States$
+ذخیره می کنیم.
+سپس با استفاده از تابع ساخته شده تمام حالات را بررسی می کنیم.
+</p>
+
+```{r,warning=FALSE}
+N=12
+States=lapply(0:(2^N-1),function(k) as.integer(intToBits(k))[1:N])
+
+FeasibleStates=list()
+count=1
+for (state in States){
+    if (check_b(state) ==1 ){
+      FeasibleStates[[count]]=state
+      count=count+1
+    }
+}
+```
+
+```{r}
+head(FeasibleStates)
+Numberofliers=sapply(FeasibleStates,function(k) sum(!k))
+cat("Possible number of liers = ","\n",unique(Numberofliers))
+```
+
+<p dir="RTL">
+این دفعه میزگردی هشت نفره تشکیل شده به گونه ایی که چهار نفر ادعا میکنند از از میان دو نفر کنار دستی یکی دروغگو و دیگری راستگوست و چهار نفر دیگر اعلام میکنند که هر دو فرد کنار دستی آنها دروغگو هستند. چند نفر دروغگو در میان جمع است؟
+</p>
+
+<p dir="RTL">
+در تابع زیر یک آرایه از حالت های افراد دور میز می گیرد و همچنین یک آرایه از گفته های آن ها. از آن جایی که دو نوع گغته داربم با صفر و یک می توان مشخص کرد که هر فرد درباره کنادستی های خود چه می گوید و در آخر بررسی کرد که آیا توالی گفته ها با توالی حالت ها مطابقت دارد یا خیر.
+</p>
+
+
+<p dir="RTL">
+در آرایه ی 
+$fact$
+عدد یک نشان دهنده ی این گفته است که هر دو نفر کنار دستی دروغگو هستند
+</p>
+<p dir="RTL">
+عدد صفر نشان دهنده ی این گفته است که یک نفر کناردستی راستگو و دیگری دروغگو است.
+</p>
+
+```{r}
+check_c <- function(state,fact){
+  
+  for(k in 1:8){
+    pre=k-1
+    nex=k+1
+    if (k==1){
+      pre=8
+    }
+    if (k==8){
+      nex=1
+    }
+    if((state[k]==1) && (fact[k]==1)){
+      if((state[nex]==1) || (state[pre]==1)){
+        return(0)
+      }
+    }
+    else if((state[k]==1) && (fact[k]==0)){
+      if( (state[nex]+state[pre]) %% 2 == 0){
+        return(0)
+      }
+    }
+    else if((state[k]==0) && (fact[k]==1)){
+      if((state[nex] == 0) && (state[pre] ==0)){
+        return(0)
+      }
+    }
+    else if(state[k]==0 && fact[k]==0){
+      if((state[nex]+state[pre]) %% 2 == 1){
+        return(0)
+      }
+    }
+  }
+  return(1)
+}
+```
+
+<p dir="RTL">
+تمام حالت ها ممکن برای گفته های هر فرد را در آرایه ی 
+$Facts$
+و تمام حالت های ممکن برای راستگو و دروغگو بودن هر فرد را در آرایه ی
+$States$
+ذخیره می کنیم.
+سپس با استفاده از تابع ساخته شده تمام حالات را بررسی می کنیم.
+</p>
+
+```{r,warning=FALSE}
+N=8
+States=lapply(0:(2^N-1),function(k) as.integer(intToBits(k))[1:N])
+Facts=unique(permn(c(1,1,1,1,0,0,0,0)))
+
+count=1
+FeasibleStates=list()
+
+for (state in States){
+  for(fact in Facts){
+    if (check_c(state,fact) ==1 ){
+      FeasibleStates[[count]]=state
+      count=count+1
+    }
+  }
+}
+```
+
+```{r}
+head(FeasibleStates)
+Numberofliers=sapply(FeasibleStates,function(k) sum(!k))
+cat("Possible number of liers = ","\n",unique(Numberofliers))
+```
+
