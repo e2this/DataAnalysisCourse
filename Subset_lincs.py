@@ -14,8 +14,6 @@ for cell in cell_list:
         sig_info_cell_cp = sig_info[["sig_id","pert_id","pert_idose","pert_itime"]][(sig_info["cell_id"] == cell) & (sig_info["pert_type"] == "trt_cp")]
         sig_info_cell_vehicle = sig_info[["sig_id","pert_id","pert_idose","pert_itime"]][(sig_info["cell_id"] == cell) & (sig_info["pert_type"] == "ctl_vehicle")]
         if ((len(sig_info_cell_cp) != 0) & (len(sig_info_cell_vehicle) != 0)):
-            pert_id_cp_list = list(set(sig_info_cell_cp["pert_id"]))
-			
 			pert_id_cp_list = list(set(sig_info_cell_cp["pert_id"]))
 			x=sig_info_cell_cp["pert_id"]
 			
