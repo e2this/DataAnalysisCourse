@@ -50,7 +50,7 @@ for cell in cell_list:
 				tot_ids= ctl_ids.tolist() + pert_ids.tolist()
 				print( "cell = %s, pert_id= %s \nN_pert=%d, N_ctl=%d" % (cell,"/////".join(pert_id),len(pert_ids),len(ctl_ids)))
 				data = parse("../Data/GSE92742_Broad_LINCS_Level5_COMPZ.MODZ_n473647x12328.gctx", cid=tot_ids)
-                wg.write(data, "Subset_GCT/GSE92742_Level5_%s_%d" % (cell,i))
+                wg.write(data, "Subset_GCT/GSE92742_Level5_%s_%d" % (cell,4))
 			
 				for pert_id in pert_id_cp_list:
 					for dose in dose_cp_list:
