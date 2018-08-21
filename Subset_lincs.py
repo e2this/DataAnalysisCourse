@@ -29,8 +29,8 @@ for cell in cell_list:
 			pert_ids= sig_info_cell_cp["sig_id"][idx_pert_id]
 			#pert_ids= sig_info_cell_cp["sig_id"][sig_info_cell_cp["pert_id"]== pert_id]
 			
-			dose_cp_list= list(set(sig_info_cell_cp["pert_idose"][sig_info_cell_cp["pert_id"]== pert_id]))
-			time_cp_list= list(set(sig_info_cell_cp["pert_itime"][sig_info_cell_cp["pert_id"]== pert_id]))
+			dose_cp_list= list(set(sig_info_cell_cp["pert_idose"][idx_pert_id]))
+			time_cp_list= list(set(sig_info_cell_cp["pert_itime"][idx_pert_id]))
 
 
 			#x=sig_info_cell_vehicle["pert_idose"]
@@ -62,7 +62,7 @@ for cell in cell_list:
 								ctl_ids_cls= sig_info_cell_vehicle["sig_id"][(sig_info_cell_vehicle["pert_id"]== pert_id)&(sig_info_cell_vehicle["pert_idose"]==dose)]
 								if(len(ctl_ids_cls) == 0):
 									ctl_ids_cls= sig_info_cell_vehicle["sig_id"][(sig_info_cell_vehicle["pert_id"]== pert_id)]
-									if(len(ctl_ids_cls) ==0)
+									if(len(ctl_ids_cls) ==0):
 										ctl_ids_cls= sig_info_cell_vehicle["sig_id"]
 		
 							sample_ids=data.col_metadata_df.index.tolist()
